@@ -1,0 +1,49 @@
+PerlTemplates
+
+
+    Allows you to reuse your HTML::Template templates in your JavaScript code.
+
+
+Motivation
+ 
+    I originally wrote this code to facilitate the principles of DRY and
+    progressive enhancement in our AJAX applications. 
+    
+    At first I adopted the EJS library(www.embeddedjs.com) which was aimed
+    at Ruby on Rails developers, but found myself constantly rewriting
+    my HTML::Template files to fit the Rails template syntax. Changes in
+    the markup or presentation logic in one template had to be duplicated.
+    
+    Using PerlTemplates, we keep one copy of each template and it's also
+    great simplified AJAX handling in our perl scripts. We can take code 
+    that looks like this:
+    
+        my $template = HTML::Template->new('/path/to/template.tmpl');
+        $template->param(%values); # where values contains the template data structure
+        print CGI->header, $template->output();
+    
+    Into this:
+    
+    if($ajax_request)
+    {
+       print CGI->header, JSON->new->encode(%values);        
+    }
+    else
+    {
+        my $template = HTML::Template->new('/path/to/template.tmpl');
+        $template->param(%values);
+        print CGI->header, $template->output();
+    }
+    
+
+Caveats
+
+    * Currently, most of the configuration options available to HTML::Template constructor 
+    are NOT supported. 
+    * Your templates must be accessible over HTTP. 
+    
+
+Credits
+
+    The concept of converting a template into a 'process' function 
+    was taken from the EmbeddedJS library at www.embeddedjs.com 
