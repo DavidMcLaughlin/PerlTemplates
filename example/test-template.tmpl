@@ -1,0 +1,28 @@
+<h1>Perl Templates proof of concept</h1><br/>
+<br/>
+Output a tmpl_var tag: <tmpl_var name="test1"><br/>
+Output a tmpl_var tag (escaped): <tmpl_var name=test2 escape=html><br/>
+<br/>
+<tmpl_if name=if_test>
+This is inside a tmpl_if that should be showing<br/>
+<tmpl_else>
+This is inside a tmpl_else that should never be showing<br/>
+</tmpl_if>
+<br/>
+<tmpl_unless name=unless_test>
+This is a tmpl_unless that should appear<br/>
+</tmpl_unless>
+<br/>
+This is a tmpl_loop wrapped in a tmpl_if (as is common in our templates)<br/>
+<tmpl_if name=loop_test>
+<ul>
+<tmpl_loop name=loop_test>
+   <li>This is an item inside a template loop with the value <tmpl_var name=loop_value> <tmpl_if name=sub_loop><ul><tmpl_loop name=sub_loop><li>This is a nested loop inside a nested if! Value: <tmpl_var name=item></li></tmpl_loop></ul></tmpl_if></li>
+</tmpl_loop>
+</ul>
+</tmpl_if>
+<br/><br/>
+Try a tmpl_include:<br/>
+<tmpl_include name="template-partial.tmpl">
+Got to the end of the file, it worked!
+

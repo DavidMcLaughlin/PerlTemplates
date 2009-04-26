@@ -1,0 +1,35 @@
+<html>
+<head>
+<title>Perl Templates Test</title>
+</head>
+
+<body>
+
+<div id="target">Content should replace me</div>
+
+<div id="string-target">Should be replaced too</div>
+
+<script type="text/javascript" src="../perltemplates.min.js"></script>
+<script type="text/javascript">
+
+    var data =
+    {
+        test1: 'Test passed!',
+        test2: 'Test2 passed!',
+        if_test: true,
+        loop_test: [{loop_value: 'I passed the loop test 1', sub_loop: [{item:'Sub Loop 1'}, {item:'Sub Loop 2'},{item:'Sub Loop 3'},{item:'Sub Loop 4'}]},{loop_value: 'I passed the loop test 2'}]
+    };
+    var tmpl = new PerlTemplates({url:'test-template.tmpl', data: data, target:'target'});    
+    tmpl.render();
+    
+    var tmpl_as_str = 'I am a string template, my status is: <tmpl_var name="test1">';
+    
+    var tmpl2 = new PerlTemplates({template: tmpl_as_str, data: data, target: 'string-target'});
+    tmpl2.render();
+
+</script>
+
+</body>
+</html>
+
+
