@@ -12,29 +12,40 @@ Motivation
     At first I adopted the EJS library(www.embeddedjs.com) which was aimed
     at Ruby on Rails developers, but found myself constantly rewriting
     my HTML::Template files to fit the Rails template syntax. Changes in
-    the markup or presentation logic in one template had to be duplicated.
+    the markup or presentation logic in one template had to be duplicated
+    across our two templates.
     
-    Using PerlTemplates, we keep one copy of each template and it's also
-    great simplified AJAX handling in our perl scripts. We can take code 
+    Using PerlTemplates, we only to keep one template. It has also
+    simplified the AJAX handling logic in our perl scripts. We can take code 
     that looks like this:
     
-        my $template = HTML::Template->new('/path/to/template.tmpl');
+        my $template = HTML::Template->new('/path/to/search/results.tmpl');
         $template->param(%values); # where values contains the template data structure
         print CGI->header, $template->output();
     
     Into this:
     
-    if($ajax_request)
-    {
-       print CGI->header, JSON->new->encode(%values);        
-    }
-    else
-    {
-        my $template = HTML::Template->new('/path/to/template.tmpl');
-        $template->param(%values);
-        print CGI->header, $template->output();
-    }
+        if($ajax_request)
+        {
+            print CGI->header, JSON->new->encode(%values);        
+        }
+        else
+        {
+            my $template = HTML::Template->new('/path/to/search/results.tmpl');
+            $template->param(%values);
+            print CGI->header, $template->output();
+        }
     
+    And the JavaScript to support this (with jQuery) becomes:
+    
+        $.getJSON('/search/results', function(json_data) {
+            var tmpl = new PerlTemplates({url:'results.tmpl', data: json_data, target: 'search-results'});
+            tmpl.render();
+        }
+        
+    And now we have a both an AJAX and non-JavaScript version of our search results script.
+    
+        
 
 Caveats
 
