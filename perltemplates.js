@@ -162,7 +162,7 @@ PerlTemplates.Lexer = function(template, data)
 {
     this.template    = template;
     this.data        = data; // for tmpl_include
-    this.tokenreg    = new RegExp("<tmpl_([a-zA-Z]+)[\\s]+name=[\"]?([a-zA-Z0-9_\\-\\.]+)[\"]?[\\s]*(?:escape=[\"]?(url|html)[\"]?)?[\\s]*>|<(\/)tmpl_([a-zA-Z]+)>|<tmpl_(else)>|<tmpl_(unless)>"); 
+    this.tokenreg    = new RegExp("<tmpl_([a-z]+)[\\s]+(?:name=)?[\"]?([a-zA-Z0-9_\\-\\.]+)[\"]?[\\s]*(?:escape=[\"]?(url|html)[\"]?)?[\\s]*>|<(\/)tmpl_([a-zA-Z]+)>|<tmpl_(else)>|<tmpl_(unless)>", "im"); 
     this.loop_depth  = 0;
     this.scope       = ["this", "data"]; // default scope
 };
@@ -256,7 +256,7 @@ PerlTemplates.Lexer.prototype.tokenize = function(item, regex)
 };
 
 PerlTemplates.Lexer.prototype.parse_token = function(token)
-{
+{    
     // Not a HTML::Template tag, so we don't care.. just spit it back out
     if(typeof token == 'string')
     {
@@ -264,7 +264,12 @@ PerlTemplates.Lexer.prototype.parse_token = function(token)
     }
     else // We have a HTML::Template token!
     {
-        // tmpl_var tag
+        // case insensitive matching
+        if(token.type)   {  token.type   = token.type.toLowerCase();   }
+        if(token.escape) {  token.escape = token.escape.toLowerCase(); }
+        if(token.close)  {  token.close  = token.close.toLowerCase();  }
+        
+       // tmpl_var tag
         if(token.type == 'var')
         {
             if(token.escape)
@@ -287,6 +292,8 @@ PerlTemplates.Lexer.prototype.parse_token = function(token)
         else if(token.type == 'include')
         {
             // TODO: relative paths for token.value
+            var template_url = token.value;
+            
             this.output_func += ' __templateOUT += "' + new PerlTemplates({url: token.value, data: this.data}).get_content() + '";';
         }
         // tmpl_if
